@@ -87,6 +87,21 @@ if (isset($_POST["request-insert"])) {
   $form_values["year"]      = (int)$_POST["year"]; // untrusted
   $form_values["grade"]     = $_POST["grade"]; // untrusted
 
+  $result = exec_sql_query(
+    $db,
+    "INSERT INTO grades (class_num, term, acad_year, grade) VALUES(:course, :term, :year, :grade);",
+
+    array(
+      ':course' => $form_values["class_num"],
+      ':term' => $form_values["term"],
+      ':year' => $form_values["year"],
+      ':grade' => $form_values["grade"]
+    )
+  );
+
+
+
+
 }
 ?>
 <!DOCTYPE html>
