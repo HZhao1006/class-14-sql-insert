@@ -98,10 +98,6 @@ if (isset($_POST["request-insert"])) {
       ':grade' => $form_values["grade"]
     )
   );
-
-
-
-
 }
 ?>
 <!DOCTYPE html>
