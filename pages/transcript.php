@@ -75,19 +75,29 @@ require "includes/db.php";
 // open database
 $db = open_sqlite_db("secure/site.sqlite");
 
-// query grades table
-$result = exec_sql_query($db, "SELECT * FROM grades;");
-$records = $result->fetchAll();
-
 // Did the user submit the form?
 if (isset($_POST["request-insert"])) {
 
-  $form_values["class_num"] = $_POST["course"]; // untrusted
-  $form_values["term"]      = (int)$_POST["term"]; // untrusted
-  $form_values["year"]      = (int)$_POST["year"]; // untrusted
-  $form_values["grade"]     = $_POST["grade"]; // untrusted
+  $form_values["class_num"] = ($_POST["course"] == "" ? NULL : $_POST["course"]); // untrusted
+  $form_values["term"]      = ($_POST["term"]   == "" ? NULL : (int)$_POST["term"]); // untrusted
+  $form_values["year"]      = ($_POST["year"]   == "" ? NULL : (int)$_POST["year"]); // untrusted
+  $form_values["grade"]     = ($_POST["grade"]  == "" ? NULL : $_POST["grade"]); // untrusted
 
+  $result = exec_sql_query(
+    $db,
+    "INSERT INTO grades (class_num, term, acad_year, grade) VALUES (:course, :term, :acad_year, :grade);",
+    array(
+      ":course"    => $form_values["class_num"], // tainted/untrusted
+      ":term"      => $form_values["term"], // tainted/untrusted
+      ":acad_year" => $form_values["year"], // tainted/untrusted
+      ":grade"     => $form_values["grade"] // tainted/untrusted
+    )
+  );
 }
+
+// query grades table
+$result = exec_sql_query($db, "SELECT * FROM grades ORDER BY term ASC;");
+$records = $result->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
