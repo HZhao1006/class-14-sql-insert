@@ -85,7 +85,7 @@ if (isset($_POST["request-insert"])) {
   $form_values["class_num"] = $_POST["course"]; // untrusted
   $form_values["term"]      = (int)$_POST["term"]; // untrusted
   $form_values["year"]      = (int)$_POST["year"]; // untrusted
-  $form_values["grade"]     = $_POST["grade"]; // untrusted
+  $form_values["grade"]     = ($_POST["grade"] == "" ? NULL : $_POST["grade"]); // untrusted
 
   $result = exec_sql_query(
     $db,
@@ -99,6 +99,9 @@ if (isset($_POST["request-insert"])) {
     )
   );
 }
+
+$result = exec_sql_query($db, "SELECT * FROM grades;");
+$records = $result->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
